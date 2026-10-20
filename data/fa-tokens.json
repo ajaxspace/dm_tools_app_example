@@ -1,0 +1,13 @@
+{
+  "issue-2": [
+    {
+      "leg": "dev",
+      "at": "2026-10-20T04:49:10Z",
+      "prompt": 85635,
+      "completion": 43293,
+      "total": 128928,
+      "cacheRead": 5320000,
+      "model": "glm-5.3-flash"
+    }
+  ]
+}
