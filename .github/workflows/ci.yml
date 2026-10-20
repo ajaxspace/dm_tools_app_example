@@ -1,0 +1,39 @@
+# PR CI for the DMTools machine loop.
+#
+# The factory stubs bind to these exact names — keep in sync when renaming:
+#   machine-merge.yml / sm-kicker.yml / merge-trigger.yml
+#       -> workflow_run: workflows: ['CI']       (this file's `name:`)
+#   sm-kicker.yml -> ci_workflow: ci.yml          (this file name)
+#   machine-sm.yml -> validation-checks: ["test"] (the `test` job id below,
+#                                                    the required context)
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate DMTools wiring
+        run: |
+          node --check .dmtools/config.js
+          node -e 'const fs=require("fs");for(const f of fs.readdirSync(".dmtools/runners")){JSON.parse(fs.readFileSync(".dmtools/runners/"+f,"utf8"));console.log("ok:",f);}'
+
+      - name: Validate workflow YAML
+        run: |
+          python3 - <<'PY'
+          import glob, yaml
+          files = sorted(glob.glob(".github/workflows/*.yml"))
+          assert any(f.endswith("/ci.yml") for f in files), "ci.yml missing"
+          for f in files:
+              yaml.safe_load(open(f))
+              print("ok:", f)
+          PY
