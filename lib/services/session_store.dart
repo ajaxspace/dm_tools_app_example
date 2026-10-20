@@ -12,14 +12,14 @@ class SessionStore {
 
   Future<void> save(AuthUser user) async {
     final prefs = await _prefs;
-    await prefs.setString(_key, jsonEncode(user.toJson()));
+    await prefs.setString(_storageKey, jsonEncode(user.toJson()));
   }
 
   /// Returns the persisted session, or null when none was stored (or the
   /// stored payload is unreadable, in which case it is discarded).
   Future<AuthUser?> restore() async {
     final prefs = await _prefs;
-    final raw = prefs.getString(_key);
+    final raw = prefs.getString(_storageKey);
     if (raw == null) return null;
     try {
       return AuthUser.fromJson(jsonDecode(raw) as Map<String, Object?>);
@@ -31,8 +31,6 @@ class SessionStore {
 
   Future<void> clear() async {
     final prefs = await _prefs;
-    await prefs.remove(_key);
+    await prefs.remove(_storageKey);
   }
-
-  String get _key => _storageKey;
 }
