@@ -4,7 +4,7 @@
 module.exports = {
   // Whose login is "the machine" — auto rework and pr_approved arming
   // fire only on PRs authored by this login.
-  machineAuthor: 'ai-teammate',
+  machineAuthor: 'ajaxspace',
   sm: {
     runners: {
       bug: '.dmtools/runners/fa-bug-dev.json',

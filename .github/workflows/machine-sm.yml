@@ -49,7 +49,7 @@ jobs:
       # #687: whose login is "the machine" — pr_approved arming and the
       # auto-rework rules fire only on PRs authored by this login
       # (.dmtools/config.js machineAuthor carries the same value).
-      machine-author: 'ai-teammate'
+      machine-author: 'ajaxspace'
       # Bridge-free mode (factory #510): the tick stamps the required
       # protection check itself. your branch protection requires
       # exactly these contexts; keep the names in sync with the ruleset.
