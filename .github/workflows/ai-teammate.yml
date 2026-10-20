@@ -136,7 +136,7 @@ jobs:
       leg: ${{ github.event.inputs.leg || '' }}
       reason: ${{ github.event.inputs.reason || github.event_name }}
       pr: ${{ github.event.inputs.pr || '' }}
-      machine-author: 'ajaxspace'
+      machine-author: 'ai-teammate'
       # Toolchains the agent legs install (cached). Unlisted = nothing installed.
       flutter-version: 'stable'
       CUSTOM_PROVIDER_KEY1_NAME: 'ZAI_API_KEY'
