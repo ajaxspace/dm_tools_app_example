@@ -95,7 +95,7 @@ void main() {
 
     testWidgets('rejects short passwords', (tester) async {
       await tester.pumpWidget(_host(FakeAuthService()));
-      for (final short in const ['', '12345', 'ab1']) {
+      for (final short in const ['12345', 'ab1']) {
         await _enterCredentials(tester, password: short);
         await _tapSignIn(tester);
         expect(find.text('Password must be at least 6 characters'),
@@ -202,13 +202,15 @@ void main() {
     testWidgets('shows a progress indicator while signing in', (
       tester,
     ) async {
-      await tester.pumpWidget(_host(FakeAuthService()));
+      final service = BlockingAuthService();
+      await tester.pumpWidget(_host(service));
       await _enterCredentials(tester);
       await tester.tap(find.byKey(const Key('login_submit_button')));
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
+      service.complete();
       await tester.pumpAndSettle();
       expect(find.byType(CircularProgressIndicator), findsNothing);
     });

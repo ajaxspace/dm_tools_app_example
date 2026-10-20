@@ -1,4 +1,3 @@
-import 'package:dm_tools_app_example/domain/auth_user.dart';
 import 'package:dm_tools_app_example/services/session_store.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';

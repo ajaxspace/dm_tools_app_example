@@ -1,4 +1,5 @@
-import 'package:dm_tools_app_example/domain/auth_exception.dart';
+import 'dart:async';
+
 import 'package:dm_tools_app_example/domain/auth_user.dart';
 import 'package:dm_tools_app_example/services/auth_gateway.dart';
 import 'package:dm_tools_app_example/services/auth_service.dart';
@@ -144,10 +145,23 @@ class FakeAuthService implements AuthService {
   }
 }
 
-/// A failing [AuthService] that throws [AuthException] on any sign-in.
-class FailingAuthService extends FakeAuthService {
-  FailingAuthService({super.error});
-}
+/// [AuthService] whose email sign-in blocks until [complete] is called —
+/// used to observe in-flight UI states.
+class BlockingAuthService extends FakeAuthService {
+  final Completer<AuthUser> _completer = Completer<AuthUser>();
 
-/// Convenience builder for an [AuthException].
-AuthException authError(String message) => AuthException(message);
+  void complete() => _completer.complete(user);
+
+  @override
+  Future<AuthUser> signInWithEmail(
+    String email,
+    String password, {
+    required bool remember,
+  }) {
+    emailCalls++;
+    lastEmail = email;
+    lastPassword = password;
+    lastRemember = remember;
+    return _completer.future;
+  }
+}

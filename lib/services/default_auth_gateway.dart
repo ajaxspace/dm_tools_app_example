@@ -66,12 +66,10 @@ class DefaultAuthGateway implements AuthGateway {
     }
     try {
       final credential = await SignInWithApple.getAppleIDCredential(
-        const AppleIdRequest(
-          requestedScopes: [
-            AppleIDAuthorizationScopes.fullName,
-            AppleIDAuthorizationScopes.email,
-          ],
-        ),
+        scopes: const [
+          AppleIDAuthorizationScopes.fullName,
+          AppleIDAuthorizationScopes.email,
+        ],
       );
       final name = [
         ?credential.givenName,

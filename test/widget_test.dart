@@ -2,6 +2,7 @@ import 'package:dm_tools_app_example/domain/auth_exception.dart';
 import 'package:dm_tools_app_example/main.dart';
 import 'package:dm_tools_app_example/ui/home_page.dart';
 import 'package:dm_tools_app_example/ui/login_page.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'fakes.dart';

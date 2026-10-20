@@ -8,14 +8,10 @@ import 'package:dm_tools_app_example/services/session_store.dart';
 /// Default [AuthService]: delegates authentication to an [AuthGateway] and
 /// persists the resulting session via [SessionStore] when "remember me" is on.
 class DefaultAuthService implements AuthService {
-  DefaultAuthService({
-    required AuthGateway gateway,
-    required SessionStore sessionStore,
-  })  : _gateway = gateway,
-        _sessionStore = sessionStore;
+  DefaultAuthService({required this.gateway, required this.sessionStore});
 
-  final AuthGateway _gateway;
-  final SessionStore _sessionStore;
+  final AuthGateway gateway;
+  final SessionStore sessionStore;
 
   @override
   Future<AuthUser> signInWithEmail(
@@ -27,37 +23,37 @@ class DefaultAuthService implements AuthService {
         !CredentialsValidator.isValidPassword(password)) {
       throw const AuthException('Invalid email or password.');
     }
-    final user = await _gateway.signInWithEmail(email, password);
+    final user = await gateway.signInWithEmail(email, password);
     await _persistIfRemembered(user, remember);
     return user;
   }
 
   @override
   Future<AuthUser> signInWithGoogle({required bool remember}) async {
-    final user = await _gateway.signInWithGoogle();
+    final user = await gateway.signInWithGoogle();
     await _persistIfRemembered(user, remember);
     return user;
   }
 
   @override
   Future<AuthUser> signInWithApple({required bool remember}) async {
-    final user = await _gateway.signInWithApple();
+    final user = await gateway.signInWithApple();
     await _persistIfRemembered(user, remember);
     return user;
   }
 
   @override
-  Future<AuthUser?> restoreSession() => _sessionStore.restore();
+  Future<AuthUser?> restoreSession() => sessionStore.restore();
 
   @override
   Future<void> signOut() async {
-    await _gateway.signOut();
-    await _sessionStore.clear();
+    await gateway.signOut();
+    await sessionStore.clear();
   }
 
   Future<void> _persistIfRemembered(AuthUser user, bool remember) async {
     if (remember) {
-      await _sessionStore.save(user);
+      await sessionStore.save(user);
     }
   }
 }

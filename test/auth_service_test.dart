@@ -1,5 +1,4 @@
 import 'package:dm_tools_app_example/domain/auth_exception.dart';
-import 'package:dm_tools_app_example/services/auth_service.dart';
 import 'package:dm_tools_app_example/services/default_auth_service.dart';
 import 'package:dm_tools_app_example/services/session_store.dart';
 import 'package:flutter_test/flutter_test.dart';
