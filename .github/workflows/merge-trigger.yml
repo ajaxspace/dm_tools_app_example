@@ -22,7 +22,7 @@ permissions:
 
 jobs:
   merge-trigger:
-    uses: IstiN/dmtools-agentic-workflows/.github/workflows/factory-merge-trigger.yml@main
+    uses: ajaxspace/dmtools-agentic-workflows/.github/workflows/factory-merge-trigger.yml@main
     with:
       runner: ubuntu-latest
       remove_pr_label: true
