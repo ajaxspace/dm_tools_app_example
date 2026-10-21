@@ -30,8 +30,9 @@ class GoogleAppleAuthService implements AuthService {
   GoogleSignIn? _googleSignIn;
   bool _googleInitialized = false;
 
-  GoogleSignIn get _google =>
-      _googleSignInOverride ?? _googleSignIn ??= GoogleSignIn.instance;
+  GoogleSignIn get _google {
+    return _googleSignInOverride ?? _googleSignIn ?? GoogleSignIn.instance;
+  }
 
   @override
   Future<AppUser?> signInWithGoogle() async {
@@ -70,7 +71,7 @@ class GoogleAppleAuthService implements AuthService {
         ],
       );
 
-      final String? displayName = <String?>[
+      final String displayName = <String?>[
         credential.givenName,
         credential.familyName,
       ]

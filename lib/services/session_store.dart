@@ -31,7 +31,12 @@ class SharedPreferencesSessionStore implements SessionStore {
   static const String _storageKey = 'remembered_account';
 
   Future<SharedPreferences> _prefs() async {
-    return _prefsOverride ??= await SharedPreferences.getInstance();
+    final SharedPreferences? existing = _prefsOverride ?? _prefsCache;
+    if (existing != null) {
+      return existing;
+    }
+    final SharedPreferences resolved = await SharedPreferences.getInstance();
+    return _prefsCache = resolved;
   }
 
   @override

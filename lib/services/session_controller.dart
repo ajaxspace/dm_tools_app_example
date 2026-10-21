@@ -101,6 +101,7 @@ class SessionController extends ChangeNotifier {
       final AppUser? account = await flow();
       if (account == null) {
         // The user backed out of the provider flow; not an error.
+        _status = SessionStatus.signedOut;
         return;
       }
 
@@ -111,6 +112,9 @@ class SessionController extends ChangeNotifier {
       }
     } on Exception catch (exception) {
       _error = exception.toString();
+      if (_status == SessionStatus.restoring) {
+        _status = SessionStatus.signedOut;
+      }
     } finally {
       _busy = false;
       notifyListeners();

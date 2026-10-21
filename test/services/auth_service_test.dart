@@ -165,7 +165,7 @@ void main() {
 
     test('rethrows non-cancellation Google errors', () async {
       googlePlatform.authenticateError = const GoogleSignInException(
-        code: GoogleSignInExceptionCode.networkError,
+        code: GoogleSignInExceptionCode.clientConfigurationError,
       );
 
       await expectLater(service.signInWithGoogle(), throwsException);
