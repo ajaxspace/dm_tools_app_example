@@ -1,0 +1,7 @@
+{
+  "key": "pr-15",
+  "fields": {
+    "summary": "gh-14 Change the app name to \"DM Tools\"",
+    "description": "Closes #14\n### What changed\nRenamed the user-visible app name to **DM Tools**: `android:label` in `AndroidManifest.xml`, `CFBundleDisplayName` + `CFBundleName` in `ios/Runner/Info.plist`, and `MaterialApp.title` in `lib/main.dart`.\n\n### Key decisions\n- Changed only the app name surfaces listed in the ticket — in-app UI (AppBar text, counter) untouched, satisfying \"no other behavior or visual changes\"\n- Added a widget test asserting `MaterialApp.title == 'DM Tools'` (TDD: written first, failed, then implemented)\n\n### How to verify\n```bash\nflutter analyze && flutter test\n```\nLauncher name: inspect `android:label` / `CFBundleDisplayName`, or build and check the home-screen icon label.\n\n<details><summary>Scope</summary>\n\n```mermaid\nflowchart TD\n  A[AndroidManifest.xml android:label] --> N[\"DM Tools\"]\n  B[Info.plist CFBundleDisplayName + CFBundleName] --> N\n  C[main.dart MaterialApp.title] --> N\n  N --> T[test/widget_test.dart asserts title]\n```\n\n</details>"
+  }
+}
