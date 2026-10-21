@@ -42,8 +42,10 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                Text(_displayNameFor(user),
-                    style: Theme.of(context).textTheme.titleLarge),
+                Text(
+                  _displayNameFor(user),
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
                 if (user.email != null) ...<Widget>[
                   const SizedBox(height: 4),
                   Text(user.email!),

@@ -44,34 +44,44 @@ void main() {
     );
     await controller.restore();
 
-    await tester.pumpWidget(MaterialApp(home: HomePage(controller: controller)));
+    await tester.pumpWidget(
+      MaterialApp(home: HomePage(controller: controller)),
+    );
 
     expect(find.text('Jane Doe'), findsOneWidget);
     expect(find.text('jane@example.com'), findsOneWidget);
   });
 
   testWidgets(
-      'falls back to the provider label when the profile has no display name',
-      (tester) async {
-    const anonymous = AppUser(id: 'a-1', provider: AuthProvider.apple);
-    final controller = SessionController(
-      authService: FakeAuthService(),
-      sessionStore: _RecordingStore(initial: anonymous),
-    );
-    await controller.restore();
+    'falls back to the provider label when the profile has no display name',
+    (tester) async {
+      const anonymous = AppUser(id: 'a-1', provider: AuthProvider.apple);
+      final controller = SessionController(
+        authService: FakeAuthService(),
+        sessionStore: _RecordingStore(initial: anonymous),
+      );
+      await controller.restore();
 
-    await tester.pumpWidget(MaterialApp(home: HomePage(controller: controller)));
+      await tester.pumpWidget(
+        MaterialApp(home: HomePage(controller: controller)),
+      );
 
-    expect(find.text('Apple account'), findsOneWidget);
-  });
+      expect(find.text('Apple account'), findsOneWidget);
+    },
+  );
 
   testWidgets('sign-out clears the remembered account', (tester) async {
     final auth = FakeAuthService();
     final store = _RecordingStore(initial: user);
-    final controller = SessionController(authService: auth, sessionStore: store);
+    final controller = SessionController(
+      authService: auth,
+      sessionStore: store,
+    );
     await controller.restore();
 
-    await tester.pumpWidget(MaterialApp(home: HomePage(controller: controller)));
+    await tester.pumpWidget(
+      MaterialApp(home: HomePage(controller: controller)),
+    );
 
     await tester.tap(find.byKey(const Key('sign_out_button')));
     await tester.pumpAndSettle();

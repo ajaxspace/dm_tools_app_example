@@ -23,7 +23,7 @@ class SharedPreferencesSessionStore implements SessionStore {
   /// Creates a store. Tests may inject a [prefs] instance with mock
   /// initial values; production resolves the real one lazily.
   SharedPreferencesSessionStore({SharedPreferences? prefs})
-      : _prefsOverride = prefs;
+    : _prefsOverride = prefs;
 
   final SharedPreferences? _prefsOverride;
   SharedPreferences? _prefsCache;
@@ -52,9 +52,7 @@ class SharedPreferencesSessionStore implements SessionStore {
     if (raw == null) {
       return null;
     }
-    return AppUser.fromJson(
-      jsonDecode(raw) as Map<String, dynamic>,
-    );
+    return AppUser.fromJson(jsonDecode(raw) as Map<String, dynamic>);
   }
 
   @override

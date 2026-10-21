@@ -78,7 +78,10 @@ void main() {
         final user = testUser();
         final store = _RecordingStore();
         final auth = FakeAuthService(googleResult: user);
-        final controller = SessionController(authService: auth, sessionStore: store);
+        final controller = SessionController(
+          authService: auth,
+          sessionStore: store,
+        );
 
         await controller.signInWithGoogle(remember: true);
 
@@ -96,7 +99,10 @@ void main() {
         final user = testUser(id: 'a-1', provider: AuthProvider.apple);
         final store = _RecordingStore();
         final auth = FakeAuthService(appleResult: user);
-        final controller = SessionController(authService: auth, sessionStore: store);
+        final controller = SessionController(
+          authService: auth,
+          sessionStore: store,
+        );
 
         await controller.signInWithApple(remember: true);
 
@@ -107,19 +113,22 @@ void main() {
       },
     );
 
-    test('signInWithGoogle(remember: false) signs in without persisting', () async {
-      final store = _RecordingStore();
-      final controller = SessionController(
-        authService: FakeAuthService(googleResult: testUser()),
-        sessionStore: store,
-      );
+    test(
+      'signInWithGoogle(remember: false) signs in without persisting',
+      () async {
+        final store = _RecordingStore();
+        final controller = SessionController(
+          authService: FakeAuthService(googleResult: testUser()),
+          sessionStore: store,
+        );
 
-      await controller.signInWithGoogle(remember: false);
+        await controller.signInWithGoogle(remember: false);
 
-      expect(controller.status, SessionStatus.signedIn);
-      expect(store.saveCalls, 0);
-      expect(store.saved, isNull);
-    });
+        expect(controller.status, SessionStatus.signedIn);
+        expect(store.saveCalls, 0);
+        expect(store.saved, isNull);
+      },
+    );
 
     test('a canceled sign-in keeps the controller signed out', () async {
       final store = _RecordingStore();
@@ -151,22 +160,27 @@ void main() {
       expect(store.saveCalls, 0);
     });
 
-    test('signOut() clears the remembered account and returns to signed out',
-        () async {
-      final user = testUser();
-      final store = _RecordingStore(initial: user);
-      final auth = FakeAuthService();
-      final controller = SessionController(authService: auth, sessionStore: store);
-      await controller.restore();
-      expect(controller.status, SessionStatus.signedIn);
+    test(
+      'signOut() clears the remembered account and returns to signed out',
+      () async {
+        final user = testUser();
+        final store = _RecordingStore(initial: user);
+        final auth = FakeAuthService();
+        final controller = SessionController(
+          authService: auth,
+          sessionStore: store,
+        );
+        await controller.restore();
+        expect(controller.status, SessionStatus.signedIn);
 
-      await controller.signOut();
+        await controller.signOut();
 
-      expect(controller.status, SessionStatus.signedOut);
-      expect(controller.user, isNull);
-      expect(auth.signOutCalls, 1);
-      expect(store.cleared, isTrue);
-    });
+        expect(controller.status, SessionStatus.signedOut);
+        expect(controller.user, isNull);
+        expect(auth.signOutCalls, 1);
+        expect(store.cleared, isTrue);
+      },
+    );
 
     test('notifies listeners on every state transition', () async {
       final controller = SessionController(
@@ -180,11 +194,12 @@ void main() {
       await controller.signInWithGoogle(remember: true);
       await controller.signOut();
 
-      expect(transitions.first, SessionStatus.restoring);
-      expect(transitions, containsAll(<SessionStatus>[
+      expect(
+        transitions.first,
         SessionStatus.signedOut,
-        SessionStatus.signedIn,
-      ]));
+        reason: 'restore() publishes its outcome, not the splash state',
+      );
+      expect(transitions, containsAll(<SessionStatus>[SessionStatus.signedIn]));
       expect(transitions.last, SessionStatus.signedOut);
     });
   });

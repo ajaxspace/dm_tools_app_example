@@ -1,15 +1,14 @@
 import 'package:dm_tools_app_example/domain/app_user.dart';
 import 'package:dm_tools_app_example/services/auth_service.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:sign_in_with_apple_platform_interface/sign_in_with_apple_platform_interface.dart';
 
 /// Records calls and returns canned authentication results.
 class _FakeGooglePlatform extends GoogleSignInPlatform {
   AuthenticationResults? authenticateResult;
   Object? authenticateError;
+  bool failSignOut = false;
   int initCalls = 0;
   int authenticateCalls = 0;
   int signOutCalls = 0;
@@ -61,6 +60,11 @@ class _FakeGooglePlatform extends GoogleSignInPlatform {
   @override
   Future<void> signOut(SignOutParams params) async {
     signOutCalls++;
+    if (failSignOut) {
+      throw const GoogleSignInException(
+        code: GoogleSignInExceptionCode.clientConfigurationError,
+      );
+    }
   }
 
   @override
@@ -138,20 +142,25 @@ void main() {
       expect(googlePlatform.authenticateCalls, 1);
     });
 
-    test('initializes the Google SDK only once across multiple sign-ins',
-        () async {
-      googlePlatform.authenticateResult = const AuthenticationResults(
-        user: GoogleSignInUserData(id: 'g-1', email: 'jane@gmail.com'),
-        authenticationTokens: AuthenticationTokenData(idToken: 'token-1'),
-      );
+    test(
+      'initializes the Google SDK only once across multiple sign-ins',
+      () async {
+        googlePlatform.authenticateResult = const AuthenticationResults(
+          user: GoogleSignInUserData(id: 'g-1', email: 'jane@gmail.com'),
+          authenticationTokens: AuthenticationTokenData(idToken: 'token-1'),
+        );
 
-      await service.signInWithGoogle();
-      await service.signInWithGoogle();
+        await service.signInWithGoogle();
+        await service.signInWithGoogle();
 
-      expect(googlePlatform.initCalls, 1,
-          reason: 'GoogleSignIn 7.x requires a single initialize() call');
-      expect(googlePlatform.authenticateCalls, 2);
-    });
+        expect(
+          googlePlatform.initCalls,
+          1,
+          reason: 'GoogleSignIn 7.x requires a single initialize() call',
+        );
+        expect(googlePlatform.authenticateCalls, 2);
+      },
+    );
 
     test('returns null when the user cancels the Google flow', () async {
       googlePlatform.authenticateError = const GoogleSignInException(
@@ -189,47 +198,54 @@ void main() {
       expect(user, isNotNull);
       expect(user!.id, 'a-1');
       expect(user.provider, AuthProvider.apple);
-      expect(user.displayName, 'John Roe',
-          reason: 'given and family name are joined');
+      expect(
+        user.displayName,
+        'John Roe',
+        reason: 'given and family name are joined',
+      );
       expect(user.email, 'john@privaterelay.appleid.com');
       expect(applePlatform.getAppleIDCredentialCalls, 1);
     });
 
-    test('handles credentials without name or email (re-authorization)',
-        () async {
-      applePlatform.credential = const AuthorizationCredentialAppleID(
-        userIdentifier: 'a-1',
-        givenName: null,
-        familyName: null,
-        email: null,
-        authorizationCode: 'code',
-        identityToken: 'jwt',
-        state: null,
-      );
+    test(
+      'handles credentials without name or email (re-authorization)',
+      () async {
+        applePlatform.credential = const AuthorizationCredentialAppleID(
+          userIdentifier: 'a-1',
+          givenName: null,
+          familyName: null,
+          email: null,
+          authorizationCode: 'code',
+          identityToken: 'jwt',
+          state: null,
+        );
 
-      final AppUser? user = await service.signInWithApple();
+        final AppUser? user = await service.signInWithApple();
 
-      expect(user!.displayName, isNull);
-      expect(user.email, isNull);
-      expect(user.id, 'a-1');
-    });
+        expect(user!.displayName, isNull);
+        expect(user.email, isNull);
+        expect(user.id, 'a-1');
+      },
+    );
 
-    test('falls back to the identity token when no user identifier exists',
-        () async {
-      applePlatform.credential = const AuthorizationCredentialAppleID(
-        userIdentifier: null,
-        givenName: null,
-        familyName: null,
-        email: null,
-        authorizationCode: 'code',
-        identityToken: 'jwt-fallback',
-        state: null,
-      );
+    test(
+      'falls back to the identity token when no user identifier exists',
+      () async {
+        applePlatform.credential = const AuthorizationCredentialAppleID(
+          userIdentifier: null,
+          givenName: null,
+          familyName: null,
+          email: null,
+          authorizationCode: 'code',
+          identityToken: 'jwt-fallback',
+          state: null,
+        );
 
-      final AppUser? user = await service.signInWithApple();
+        final AppUser? user = await service.signInWithApple();
 
-      expect(user!.id, 'jwt-fallback');
-    });
+        expect(user!.id, 'jwt-fallback');
+      },
+    );
 
     test('returns null when the user cancels the Apple flow', () async {
       applePlatform.error = const SignInWithAppleAuthorizationException(
@@ -256,16 +272,22 @@ void main() {
     test('signs out from Google', () async {
       await service.signOut();
 
+      expect(
+        googlePlatform.initCalls,
+        1,
+        reason: 'signOut initializes the SDK first (7.x contract)',
+      );
       expect(googlePlatform.signOutCalls, 1);
     });
 
-    test('does not sign out from Google before the first sign-in', () async {
-      final fresh = GoogleAppleAuthService();
+    test(
+      'is best effort: a failing platform sign-out does not throw',
+      () async {
+        googlePlatform.authenticateError = null;
+        googlePlatform.failSignOut = true;
 
-      await fresh.signOut();
-
-      expect(googlePlatform.signOutCalls, 0,
-          reason: 'signOut before initialize would throw on the real SDK');
-    });
+        await expectLater(service.signOut(), completes);
+      },
+    );
   });
 }

@@ -60,7 +60,36 @@ class _LoginPageState extends State<LoginPage> {
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
                       const SizedBox(height: 32),
+                      OutlinedButton.icon(
+                        key: const Key('google_sign_in_button'),
+                        onPressed: busy
+                            ? null
+                            : () => _signIn(controller.signInWithGoogle),
+                        icon: const _GoogleGlyph(),
+                        label: const Text('Sign in with Google'),
+                      ),
+                      if (appleSignInAvailable) ...<Widget>[
+                        const SizedBox(height: 12),
+                        SignInWithAppleButton(
+                          onPressed: busy
+                              ? null
+                              : () => _signIn(controller.signInWithApple),
+                          style: SignInWithAppleButtonStyle.black,
+                          height: 48,
+                        ),
+                      ],
+                      SwitchListTile(
+                        key: const Key('remember_me_toggle'),
+                        title: const Text('Remember me'),
+                        subtitle: const Text('Stay signed in on this device'),
+                        value: _rememberMe,
+                        onChanged: busy
+                            ? null
+                            : (bool value) =>
+                                  setState(() => _rememberMe = value),
+                      ),
                       if (busy) ...<Widget>[
+                        const SizedBox(height: 24),
                         const Center(
                           child: SizedBox(
                             key: Key('login_progress'),
@@ -68,33 +97,6 @@ class _LoginPageState extends State<LoginPage> {
                             height: 28,
                             child: CircularProgressIndicator(strokeWidth: 3),
                           ),
-                        ),
-                        const SizedBox(height: 24),
-                      ] else ...<Widget>[
-                        OutlinedButton.icon(
-                          key: const Key('google_sign_in_button'),
-                          onPressed: () =>
-                              _signIn(controller.signInWithGoogle),
-                          icon: const _GoogleGlyph(),
-                          label: const Text('Sign in with Google'),
-                        ),
-                        if (appleSignInAvailable) ...<Widget>[
-                          const SizedBox(height: 12),
-                          SignInWithAppleButton(
-                            onPressed: () =>
-                                _signIn(controller.signInWithApple),
-                            style: SignInWithAppleButtonStyle.black,
-                            height: 48,
-                          ),
-                        ],
-                        SwitchListTile(
-                          key: const Key('remember_me_toggle'),
-                          title: const Text('Remember me'),
-                          subtitle:
-                              const Text('Stay signed in on this device'),
-                          value: _rememberMe,
-                          onChanged: (bool value) =>
-                              setState(() => _rememberMe = value),
                         ),
                       ],
                       if (controller.error != null) ...<Widget>[

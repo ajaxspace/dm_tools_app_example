@@ -60,8 +60,8 @@ class _DmToolsAppState extends State<DmToolsApp> {
         builder: (BuildContext context, Widget? _) {
           return switch (_controller.status) {
             SessionStatus.restoring => const Scaffold(
-                body: Center(child: CircularProgressIndicator()),
-              ),
+              body: Center(child: CircularProgressIndicator()),
+            ),
             SessionStatus.signedOut => LoginPage(controller: _controller),
             SessionStatus.signedIn => HomePage(controller: _controller),
           };

@@ -24,7 +24,7 @@ abstract class AuthService {
 class GoogleAppleAuthService implements AuthService {
   /// Creates the service. Tests may inject a [googleSignIn] instance.
   GoogleAppleAuthService({GoogleSignIn? googleSignIn})
-      : _googleSignInOverride = googleSignIn;
+    : _googleSignInOverride = googleSignIn;
 
   final GoogleSignIn? _googleSignInOverride;
   GoogleSignIn? _googleSignIn;
@@ -34,13 +34,17 @@ class GoogleAppleAuthService implements AuthService {
     return _googleSignInOverride ?? _googleSignIn ?? GoogleSignIn.instance;
   }
 
-  @override
-  Future<AppUser?> signInWithGoogle() async {
-    // GoogleSignIn 7.x requires a single initialize() before authenticate().
+  Future<void> _ensureGoogleInitialized() async {
     if (!_googleInitialized) {
       await _google.initialize();
       _googleInitialized = true;
     }
+  }
+
+  @override
+  Future<AppUser?> signInWithGoogle() async {
+    // GoogleSignIn 7.x requires a single initialize() before authenticate().
+    await _ensureGoogleInitialized();
 
     try {
       final GoogleSignInAccount account = await _google.authenticate(
@@ -65,25 +69,24 @@ class GoogleAppleAuthService implements AuthService {
     try {
       final AuthorizationCredentialAppleID credential =
           await SignInWithApple.getAppleIDCredential(
-        scopes: <AppleIDAuthorizationScopes>[
-          AppleIDAuthorizationScopes.fullName,
-          AppleIDAuthorizationScopes.email,
-        ],
-      );
+            scopes: <AppleIDAuthorizationScopes>[
+              AppleIDAuthorizationScopes.fullName,
+              AppleIDAuthorizationScopes.email,
+            ],
+          );
 
-      final String displayName = <String?>[
-        credential.givenName,
-        credential.familyName,
-      ]
-          .whereType<String>()
-          .map((String part) => part.trim())
-          .where((String part) => part.isNotEmpty)
-          .join(' ');
+      final String displayName =
+          <String?>[credential.givenName, credential.familyName]
+              .whereType<String>()
+              .map((String part) => part.trim())
+              .where((String part) => part.isNotEmpty)
+              .join(' ');
 
       return AppUser(
         // iOS always reports a userIdentifier; on other platforms fall
         // back to the identity token so the account is still addressable.
-        id: credential.userIdentifier ??
+        id:
+            credential.userIdentifier ??
             credential.identityToken ??
             'apple-unknown',
         provider: AuthProvider.apple,
@@ -100,10 +103,16 @@ class GoogleAppleAuthService implements AuthService {
 
   @override
   Future<void> signOut() async {
-    // Calling signOut() before initialize() throws on the real SDK, and
-    // only Google keeps a plugin-side session.
-    if (_googleInitialized || _googleSignInOverride != null) {
+    try {
+      // Initialize first: GoogleSignIn 7.x requires it before any call,
+      // including signOut(). This also cleans a Google SDK-side session
+      // left over from a previous process (remember-me restore path).
+      await _ensureGoogleInitialized();
       await _google.signOut();
+    } on GoogleSignInException {
+      // Best effort: a device without Google services must still be able
+      // to sign out of the local session; the caller clears the store
+      // regardless.
     }
   }
 }

@@ -36,7 +36,10 @@ void main() {
     test('toJson/fromJson roundtrips nullable profile fields', () {
       // Apple only returns name/email on the first authorization; later
       // credentials carry just the user identifier.
-      const anonymousAppleUser = AppUser(id: 'apple-2', provider: AuthProvider.apple);
+      const anonymousAppleUser = AppUser(
+        id: 'apple-2',
+        provider: AuthProvider.apple,
+      );
 
       final AppUser restored = AppUser.fromJson(anonymousAppleUser.toJson());
 
@@ -59,7 +62,9 @@ void main() {
       expect(googleUser, isNot(equals(appleUser)));
       expect(
         googleUser,
-        isNot(equals(const AppUser(id: 'google-2', provider: AuthProvider.google))),
+        isNot(
+          equals(const AppUser(id: 'google-2', provider: AuthProvider.google)),
+        ),
       );
       expect(googleUser, equals(googleUser));
     });

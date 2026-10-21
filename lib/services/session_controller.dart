@@ -21,9 +21,7 @@ enum SessionStatus {
 /// The widget tree listens via [ChangeNotifier]; every state transition
 /// notifies listeners.
 class SessionController extends ChangeNotifier {
-  SessionController({required AuthService authService, required SessionStore sessionStore})
-      : _authService = authService,
-        _sessionStore = sessionStore;
+  SessionController({required this._authService, required this._sessionStore});
 
   final AuthService _authService;
   final SessionStore _sessionStore;
@@ -89,10 +87,7 @@ class SessionController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _signIn(
-    Future<AppUser?> Function() flow,
-    bool remember,
-  ) async {
+  Future<void> _signIn(Future<AppUser?> Function() flow, bool remember) async {
     _busy = true;
     _error = null;
     notifyListeners();

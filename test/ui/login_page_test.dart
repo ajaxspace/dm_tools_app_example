@@ -12,9 +12,8 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../fakes/fake_auth_service.dart';
 
 class _RecordingStore implements SessionStore {
-  _RecordingStore({this.initial});
+  _RecordingStore();
 
-  final AppUser? initial;
   AppUser? saved;
   bool cleared = false;
   int saveCalls = 0;
@@ -26,7 +25,7 @@ class _RecordingStore implements SessionStore {
   }
 
   @override
-  Future<AppUser?> load() async => cleared ? null : saved ?? initial;
+  Future<AppUser?> load() async => cleared ? null : saved;
 
   @override
   Future<void> save(AppUser user) async {
@@ -42,16 +41,15 @@ Future<(FakeAuthService, _RecordingStore, SessionController)> _pumpLogin(
   required _RecordingStore store,
 }) async {
   final controller = SessionController(authService: auth, sessionStore: store);
-  await tester.pumpWidget(
-    MaterialApp(home: LoginPage(controller: controller)),
-  );
+  await tester.pumpWidget(MaterialApp(home: LoginPage(controller: controller)));
   await tester.pump();
   return (auth, store, controller);
 }
 
 void main() {
-  testWidgets('renders Google and Apple buttons plus the remember-me toggle',
-      (tester) async {
+  testWidgets('renders Google and Apple buttons plus the remember-me toggle', (
+    tester,
+  ) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
     final (_, _, _) = await _pumpLogin(
       tester,
@@ -63,21 +61,20 @@ void main() {
     expect(find.byType(SignInWithAppleButton), findsOneWidget);
     expect(find.byKey(const Key('remember_me_toggle')), findsOneWidget);
     expect(
-      tester.widget<Switch>(find.byKey(const Key('remember_me_toggle'))).value,
+      tester
+          .widget<SwitchListTile>(find.byKey(const Key('remember_me_toggle')))
+          .value,
       isFalse,
       reason: 'remember-me defaults to off',
     );
     debugDefaultTargetPlatformOverride = null;
   });
 
-  testWidgets('Google button is shown on Android, Apple button is not',
-      (tester) async {
+  testWidgets('Google button is shown on Android, Apple button is not', (
+    tester,
+  ) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.android;
-    await _pumpLogin(
-      tester,
-      auth: FakeAuthService(),
-      store: _RecordingStore(),
-    );
+    await _pumpLogin(tester, auth: FakeAuthService(), store: _RecordingStore());
 
     expect(find.byKey(const Key('google_sign_in_button')), findsOneWidget);
     expect(
@@ -89,34 +86,37 @@ void main() {
   });
 
   testWidgets(
-      'toggling remember-me then signing in with Google persists the account',
-      (tester) async {
-    debugDefaultTargetPlatformOverride = TargetPlatform.android;
-    final (auth, store, _) = await _pumpLogin(
-      tester,
-      auth: FakeAuthService(googleResult: testUser()),
-      store: _RecordingStore(),
-    );
+    'toggling remember-me then signing in with Google persists the account',
+    (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      final (auth, store, _) = await _pumpLogin(
+        tester,
+        auth: FakeAuthService(googleResult: testUser()),
+        store: _RecordingStore(),
+      );
 
-    await tester.tap(find.byKey(const Key('remember_me_toggle')));
-    await tester.pump();
-    expect(
-      tester.widget<Switch>(find.byKey(const Key('remember_me_toggle'))).value,
-      isTrue,
-    );
+      await tester.tap(find.byKey(const Key('remember_me_toggle')));
+      await tester.pump();
+      expect(
+        tester
+            .widget<SwitchListTile>(find.byKey(const Key('remember_me_toggle')))
+            .value,
+        isTrue,
+      );
 
-    await tester.tap(find.byKey(const Key('google_sign_in_button')));
-    await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('google_sign_in_button')));
+      await tester.pumpAndSettle();
 
-    expect(auth.googleSignInCalls, 1);
-    expect(store.saveCalls, 1, reason: 'remember-me was on');
-    expect(store.saved?.email, 'test@example.com');
-    debugDefaultTargetPlatformOverride = null;
-  });
+      expect(auth.googleSignInCalls, 1);
+      expect(store.saveCalls, 1, reason: 'remember-me was on');
+      expect(store.saved?.email, 'test@example.com');
+      debugDefaultTargetPlatformOverride = null;
+    },
+  );
 
-  testWidgets(
-      'signing in with Google without remember-me skips persistence',
-      (tester) async {
+  testWidgets('signing in with Google without remember-me skips persistence', (
+    tester,
+  ) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.android;
     final (auth, store, _) = await _pumpLogin(
       tester,
@@ -132,8 +132,9 @@ void main() {
     debugDefaultTargetPlatformOverride = null;
   });
 
-  testWidgets('tapping the Apple button starts Apple sign-in on iOS',
-      (tester) async {
+  testWidgets('tapping the Apple button starts Apple sign-in on iOS', (
+    tester,
+  ) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
     final (auth, _, controller) = await _pumpLogin(
       tester,
@@ -149,8 +150,9 @@ void main() {
     debugDefaultTargetPlatformOverride = null;
   });
 
-  testWidgets('buttons show progress while a sign-in is in flight',
-      (tester) async {
+  testWidgets('buttons show progress while a sign-in is in flight', (
+    tester,
+  ) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.android;
     final gate = Completer<AppUser?>();
     final (_, _, controller) = await _pumpLogin(
@@ -165,9 +167,11 @@ void main() {
     expect(controller.busy, isTrue);
     expect(find.byKey(const Key('login_progress')), findsOneWidget);
     expect(
-      tester.widget<OutlinedButton>(
-        find.byKey(const Key('google_sign_in_button')),
-      ).onPressed,
+      tester
+          .widget<OutlinedButton>(
+            find.byKey(const Key('google_sign_in_button')),
+          )
+          .onPressed,
       isNull,
       reason: 'the button is disabled while a sign-in runs',
     );
@@ -180,8 +184,7 @@ void main() {
     debugDefaultTargetPlatformOverride = null;
   });
 
-  testWidgets('a failed sign-in shows an inline error message',
-      (tester) async {
+  testWidgets('a failed sign-in shows an inline error message', (tester) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.android;
     await _pumpLogin(
       tester,

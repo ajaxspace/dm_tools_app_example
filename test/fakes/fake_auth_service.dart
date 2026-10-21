@@ -21,6 +21,10 @@ class FakeAuthService implements AuthService {
   AppUser? googleResult;
   AppUser? appleResult;
 
+  /// When set, the respective sign-in throws this instead of returning.
+  Object? googleError;
+  Object? appleError;
+
   /// When set, [signInWithGoogle] stays in flight until the completer is
   /// resolved — lets tests assert the busy state.
   Completer<AppUser?>? googleGate;
@@ -63,7 +67,10 @@ class FakeAuthService implements AuthService {
 }
 
 /// Simple signed-in user builder for tests.
-AppUser testUser({String id = 'u-1', AuthProvider provider = AuthProvider.google}) {
+AppUser testUser({
+  String id = 'u-1',
+  AuthProvider provider = AuthProvider.google,
+}) {
   return AppUser(
     id: id,
     provider: provider,
