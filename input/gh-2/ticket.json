@@ -1,7 +1,0 @@
-{
-  "key": "gh-2",
-  "fields": {
-    "summary": "Create mobile Flutter project with simple login page (Google/Apple sign-in, remember me)",
-    "description": "## Task\n\nCreate a new **mobile Flutter project** in this repository and implement a simple login page.\n\n## Requirements\n\n- Flutter mobile project (Android + iOS targets), clean default structure\n- Login page: email/password fields, sign-in button, basic validation and error states\n- **Remember me**: persist the session locally so the user stays signed in across app restarts\n- **Google sign-in** integration (credential save / autofill where the platform supports it)\n- **Apple sign-in** integration (per Apple guidelines)\n\n## Acceptance criteria\n\n- [ ] `flutter pub get` and `flutter analyze` pass\n- [ ] `flutter test` passes (at least a widget test for the login page)\n- [ ] Login page renders on Android and iOS\n- [ ] Google and Apple sign-in wired, with saved credentials / autofill where supported"
-  }
-}
