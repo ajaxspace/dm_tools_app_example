@@ -1,0 +1,7 @@
+{
+  "key": "pr-5",
+  "fields": {
+    "summary": "gh-4 fork-e2e: add a marker file to verify the forked machine loop end-to-end",
+    "description": "Closes #4\n### What changed\nAdded `FORK_E2E_MARKER.md` at the repo root containing one line: `fork e2e round 1 — 2026-10-21`, per gh-4 (round-1 e2e verification of the forked machine loop).\n\n### Key decisions\n- Marker only — no production code touched; gh-2 login implementation remains untouched on `main`.\n\n### How to verify\n```bash\ncat FORK_E2E_MARKER.md   # fork e2e round 1 — 2026-10-21\ngit log origin/main..HEAD --oneline\n```"
+  }
+}
