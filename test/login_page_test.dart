@@ -1,5 +1,6 @@
 import 'package:dm_tools_app_example/domain/auth_exception.dart';
 import 'package:dm_tools_app_example/domain/auth_user.dart';
+import 'package:dm_tools_app_example/ui/app_logo.dart';
 import 'package:dm_tools_app_example/ui/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -69,6 +70,36 @@ void main() {
 
       final checkbox = tester.widget<Checkbox>(find.byType(Checkbox));
       expect(checkbox.value, isTrue);
+    });
+  });
+
+  group('LoginPage app logo', () {
+    testWidgets('displays the app logo asset above the headline', (
+      tester,
+    ) async {
+      await tester.pumpWidget(_host(FakeAuthService()));
+      await tester.pump();
+
+      final logoFinder = find.byKey(const Key('login_app_logo'));
+      expect(logoFinder, findsOneWidget);
+
+      final image = tester.widget<Image>(find.descendant(
+        of: logoFinder,
+        matching: find.byType(Image),
+      ));
+      expect(
+        image.image,
+        isA<AssetImage>().having(
+          (p) => p.assetName,
+          'assetName',
+          AppLogo.assetName,
+        ),
+      );
+
+      expect(
+        tester.getTopLeft(logoFinder).dy,
+        lessThan(tester.getTopLeft(find.text('Welcome back')).dy),
+      );
     });
   });
 

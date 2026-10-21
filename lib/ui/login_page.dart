@@ -2,6 +2,7 @@ import 'package:dm_tools_app_example/domain/auth_exception.dart';
 import 'package:dm_tools_app_example/domain/auth_user.dart';
 import 'package:dm_tools_app_example/domain/credentials_validator.dart';
 import 'package:dm_tools_app_example/services/auth_service.dart';
+import 'package:dm_tools_app_example/ui/app_logo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -132,6 +133,10 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      const Center(
+                        child: AppLogo(key: Key('login_app_logo')),
+                      ),
+                      const SizedBox(height: 24),
                       Text(
                         'Welcome back',
                         style: Theme.of(context).textTheme.headlineSmall,

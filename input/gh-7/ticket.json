@@ -1,0 +1,7 @@
+{
+  "key": "gh-7",
+  "fields": {
+    "summary": "Change the app logo to the one in the attachment",
+    "description": "Replace the current app logo with the new logo attached to this issue.\n\n**Scope:**\n- Update the launcher icons (Android `mipmap` set and iOS `AppIcon` assets)\n- Update the in-app logo shown on the login screen\n- Keep the current app name, colors, and layout otherwise unchanged\n\n**Acceptance criteria:**\n- [ ] App builds with the new logo\n- [ ] No other visual changes\n\nThe logo file is attached to this issue."
+  }
+}
