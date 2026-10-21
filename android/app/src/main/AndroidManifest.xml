@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="dm_tools_app_example"
+        android:label="DM Tools"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
