@@ -3,6 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  testWidgets('app title is DM Tools', (WidgetTester tester) async {
+    await tester.pumpWidget(const MyApp());
+
+    final MaterialApp app = tester.widget<MaterialApp>(
+      find.byType(MaterialApp),
+    );
+    expect(app.title, 'DM Tools');
+  });
+
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     await tester.pumpWidget(const MyApp());
 
