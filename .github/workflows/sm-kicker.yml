@@ -36,7 +36,7 @@ concurrency:
 
 jobs:
   kicker:
-    uses: ajaxspace/dmtools-agentic-workflows/.github/workflows/factory-sm-kicker.yml@fork/repoint-ajaxspace
+    uses: ajaxspace/dmtools-agentic-workflows/.github/workflows/factory-sm-kicker.yml@main
     with:
       sm_workflow: machine-sm.yml
       ci_workflow: ci.yml

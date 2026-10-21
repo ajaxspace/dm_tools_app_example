@@ -129,11 +129,8 @@ jobs:
       (github.event_name == 'issues' &&
        github.event.label.name == 'pr_approved') ||
       github.event_name == 'workflow_dispatch')
-    uses: ajaxspace/dmtools-agentic-workflows/.github/workflows/factory-teammate.yml@fork/repoint-ajaxspace
+    uses: ajaxspace/dmtools-agentic-workflows/.github/workflows/factory-teammate.yml@main
     with:
-      # kit scripts must come from the SAME branch the workflow is pinned to
-      # (default is 'main', which is unpatched until the factory PR merges)
-      factory_home_ref: 'fork/repoint-ajaxspace'
       runner: ubuntu-latest
       issue: ${{ github.event.issue.number || github.event.inputs.issue }}
       leg: ${{ github.event.inputs.leg || '' }}
