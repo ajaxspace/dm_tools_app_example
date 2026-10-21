@@ -43,7 +43,7 @@ jobs:
   sm:
     # Frozen machine loop — pinned to the immutable SHA of
     # IstiN/dmtools-agentic-workflows main (same pin as ai-teammate.yml).
-    uses: IstiN/dmtools-agentic-workflows/.github/workflows/factory-sm.yml@main
+    uses: ajaxspace/dmtools-agentic-workflows/.github/workflows/factory-sm.yml@fork/repoint-ajaxspace
     with:
       runner: ubuntu-latest
       # #687: whose login is "the machine" — pr_approved arming and the

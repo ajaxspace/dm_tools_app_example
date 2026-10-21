@@ -129,7 +129,7 @@ jobs:
       (github.event_name == 'issues' &&
        github.event.label.name == 'pr_approved') ||
       github.event_name == 'workflow_dispatch')
-    uses: IstiN/dmtools-agentic-workflows/.github/workflows/factory-teammate.yml@main
+    uses: ajaxspace/dmtools-agentic-workflows/.github/workflows/factory-teammate.yml@fork/repoint-ajaxspace
     with:
       runner: ubuntu-latest
       issue: ${{ github.event.issue.number || github.event.inputs.issue }}
